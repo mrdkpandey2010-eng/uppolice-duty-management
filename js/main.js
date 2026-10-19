@@ -22,7 +22,9 @@ function showLogin(message){
   $("#loginScreen").hidden=false;
   const err=$("#loginError");
   if(message){ err.textContent=message; err.hidden=false; } else err.hidden=true;
-  if(DEMO) renderDemoLogin(); else initGSI();
+  if(DEMO) renderDemoLogin();
+  else if(HAS_GOOGLE_AUTH) initGSI();
+  else { $("#gsiButton").hidden=true; $("#loginLoading").hidden=true; $("#demoLogin").hidden=true; }
   wirePasswordLogin();
 }
 function wirePasswordLogin(){

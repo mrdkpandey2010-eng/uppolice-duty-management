@@ -6,7 +6,9 @@
 "use strict";
 
 const CFG = window.APP_CONFIG || {};
-const DEMO = !CFG.API_URL || /PASTE_/.test(CFG.API_URL) || !CFG.GOOGLE_CLIENT_ID || /PASTE_/.test(CFG.GOOGLE_CLIENT_ID);
+const HAS_API = !!(CFG.API_URL && !/PASTE_/.test(CFG.API_URL));
+const HAS_GOOGLE_AUTH = !!(CFG.GOOGLE_CLIENT_ID && !/PASTE_/.test(CFG.GOOGLE_CLIENT_ID));
+const DEMO = !HAS_API;
 const APP_VERSION = "4.0";
 
 /* ------------------------------------------------------------------ ranks */
