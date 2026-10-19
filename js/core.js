@@ -10,18 +10,39 @@ const DEMO = !CFG.API_URL || /PASTE_/.test(CFG.API_URL) || !CFG.GOOGLE_CLIENT_ID
 const APP_VERSION = "4.0";
 
 /* ------------------------------------------------------------------ ranks */
-const RANKS = ["ACP","IP","SI","SI Tele","ASI","SCPO","HC Tele","CPO","PC Tele","PC DVR","AR CPO"];
+const RANKS = ["ACP","Inspector","SSI","SI","ASI","Head Constable","Constable","W/Constable","Driver","Home Guard","PRD","IP","SI Tele","SCPO","HC Tele","CPO","PC Tele","PC DVR","AR CPO"];
 const RANK_COLORS = {
-  "ACP":"#7C3AED","IP":"#2563EB","SI":"#0D9488","SI Tele":"#0891B2","ASI":"#16A34A","SCPO":"#CA8A04",
-  "HC Tele":"#EA580C","CPO":"#4F46E5","PC Tele":"#DB2777","PC DVR":"#92400E","AR CPO":"#BE185D"
+  "ACP":"#7C3AED","Inspector":"#1E40AF","IP":"#1E40AF","SSI":"#1D4ED8","SI":"#0D9488","SI Tele":"#0891B2",
+  "ASI":"#16A34A","Head Constable":"#CA8A04","SCPO":"#CA8A04","HC Tele":"#EA580C",
+  "Constable":"#4F46E5","W/Constable":"#DB2777","Driver":"#92400E","Home Guard":"#64748B","PRD":"#475569",
+  "CPO":"#4F46E5","PC Tele":"#DB2777","PC DVR":"#92400E","AR CPO":"#BE185D"
 };
-// Grade designations: ASI(G) = an SCPO drawing ASI grade; SI(G) = an ASI drawing SI grade.
-const GRADE_MAP = { "ASI(G)":"SCPO", "SI(G)":"ASI" };
-const RANK_LABELS = { "SCPO":"SCPO(G)" };
+// Grade designations
+const GRADE_MAP = { "ASI(G)":"Head Constable", "SI(G)":"ASI" };
+const RANK_LABELS = {
+  "Inspector":"Inspector (प्रभारी नि.)",
+  "SSI":"SSI (वरिष्ठ उ.नि.)",
+  "SI":"SI (उ.नि.)",
+  "ASI":"ASI (स.उ.नि.)",
+  "Head Constable":"Head Constable (हे.का.)",
+  "Constable":"Constable (आरक्षी)",
+  "W/Constable":"W/Constable (म.आरक्षी)",
+  "Driver":"Driver (चालक)",
+  "Home Guard":"Home Guard (एच.जी.)",
+  "PRD":"PRD (पीआरडी)"
+};
 const RANK_OPTIONS = [
-  {value:"ACP",label:"ACP"},{value:"IP",label:"IP"},{value:"SI",label:"SI"},{value:"SI Tele",label:"SI Tele"},
-  {value:"ASI",label:"ASI"},{value:"SI(G)",label:"SI(G)"},{value:"SCPO",label:"SCPO(G)"},{value:"ASI(G)",label:"ASI(G)"},
-  {value:"HC Tele",label:"HC Tele"},{value:"CPO",label:"CPO"},{value:"PC Tele",label:"PC Tele"},{value:"PC DVR",label:"PC DVR"},{value:"AR CPO",label:"AR CPO"}
+  {value:"Inspector",label:"Inspector / प्रभारी निरीक्षक"},
+  {value:"SSI",label:"SSI / वरिष्ठ उप-निरीक्षक"},
+  {value:"SI",label:"SI / उप-निरीक्षक"},
+  {value:"ASI",label:"ASI / सहायक उप-निरीक्षक"},
+  {value:"Head Constable",label:"Head Constable / मुख्य आरक्षी"},
+  {value:"Constable",label:"Constable / आरक्षी"},
+  {value:"W/Constable",label:"W/Constable / महिला आरक्षी"},
+  {value:"Driver",label:"Driver / चालक आरक्षी"},
+  {value:"Home Guard",label:"Home Guard / होमगार्ड"},
+  {value:"PRD",label:"PRD / प्रांतीय रक्षक दल"},
+  {value:"ACP",label:"ACP / सहायक पुलिस आयुक्त"}
 ];
 function baseRank(r){ return GRADE_MAP[r] || r; }
 function displayRank(r){ return RANK_LABELS[r] || r; }
@@ -32,46 +53,43 @@ function rankPill(r){ return `<span class="rank-pill" style="${pillStyle(r)}">${
 
 /* ------------------------------------------------------------ duty types */
 const DUTY_CATEGORIES = [
-  {key:"sho",label:"SHO"},
-  {key:"crime_inv",label:"Crime Investigation"},
-  {key:"station_writer",label:"Station Writer"},
-  {key:"asw",label:"ASW"},
-  {key:"day_gd",label:"Day GD"},
-  {key:"day_watch",label:"Day Watch"},
-  {key:"night_gd",label:"Night GD"},
-  {key:"night_watch",label:"Night Watch/Officer"},
-  {key:"inv_asst",label:"Investigation Assistance"},
-  {key:"petition_enq",label:"Petition Enquiry"},
-  {key:"pro",label:"PRO"},
-  {key:"aid_prosecution",label:"Aid Prosecution"},
-  {key:"echo",label:"Echo"},
-  {key:"echo_women",label:"Echo Women"},
-  {key:"women_help_desk",label:"Women Help Desk"},
-  {key:"course",label:"Course"},
-  {key:"class",label:"Class"},
-  {key:"driver",label:"Driver"},
-  {key:"sub_division_check",label:"Sub Division Check"},
-  {key:"other_duty",label:"Other duty"}
+  {key:"sho",label:"SHO / थाना प्रभारी"},
+  {key:"day_officer",label:"Day Officer / दिवस अधिकारी"},
+  {key:"night_officer",label:"Night Officer / रात्रि अधिकारी"},
+  {key:"head_moharrir",label:"Head Moharrir / मुख्य मुहर्रिर"},
+  {key:"gd_writer",label:"GD Writer / जीडी लेखक"},
+  {key:"crime_inv",label:"Case Investigation / विवेचना"},
+  {key:"day_sentry",label:"Day Sentry / दिवस संतरी"},
+  {key:"night_sentry",label:"Night Sentry / रात्रि संतरी"},
+  {key:"hawalat_guard",label:"Hawalat Guard / हवालात पहरा"},
+  {key:"dial_112",label:"Dial 112 / PRV ड्यूटी"},
+  {key:"cheetah_mobile",label:"Cheetah Mobile / बीट गश्त"},
+  {key:"pink_booth",label:"Pink Booth / महिला हेल्प डेस्क"},
+  {key:"parokar_court",label:"Court / पैरोकार ड्यूटी"},
+  {key:"saman_warrant",label:"Saman & Warrant / सम्मन-वारंट"},
+  {key:"petition_enq",label:"Petition Enquiry / शिकायती जांच"},
+  {key:"law_and_order",label:"Law & Order / शांति व्यवस्था"},
+  {key:"driver",label:"Driver / सरकारी वाहन चालक"},
+  {key:"course",label:"Course / ट्रेनिंग"},
+  {key:"other_duty",label:"Other Duty / अन्य ड्यूटी"}
 ];
 const FIXED_DUTY_LABELS = DUTY_CATEGORIES.map(c=>c.label);
 
 // Off duty / leave / rest — in reporting order, with default attendance codes.
 const OFF_DUTY_CATEGORIES = [
-  {key:"echo_rest",label:"Echo Rest",code:"ER"},
-  {key:"sub_div_check_rest",label:"Sub Division Check Rest",code:"SDR"},
-  {key:"echo_women_rest",label:"Echo Women Rest",code:"EWR"},
-  {key:"night_rest",label:"Night Rest",code:"NR"},
-  {key:"casual_leave",label:"Casual Leave",code:"CL"},
-  {key:"day_off",label:"Day Off",code:"D/OFF"},
-  {key:"compensatory_off",label:"Compensatory Off",code:"COFF"},
+  {key:"weekly_off",label:"Weekly Off (साप्ताहिक अवकाश)",code:"W/OFF"},
+  {key:"casual_leave",label:"Casual Leave (आकस्मिक अवकाश)",code:"CL"},
+  {key:"earned_leave",label:"Earned Leave (उपार्जित अवकाश)",code:"EL"},
+  {key:"medical_leave",label:"Medical Leave (चिकित्सा अवकाश)",code:"ML"},
+  {key:"night_rest",label:"Night Duty Rest (रात्रि विश्राम)",code:"NR"},
+  {key:"day_off",label:"Day Off (डे-ऑफ)",code:"D/OFF"},
+  {key:"compensatory_off",label:"Compensatory Off (सी-ऑफ)",code:"COFF"},
   {key:"commuted_leave",label:"Commuted Leave",code:"CML"},
-  {key:"medical_leave",label:"Medical Leave",code:"ML"},
-  {key:"half_pay_leave",label:"Half Pay Leave",code:"HPL"},
-  {key:"earned_leave",label:"Earned Leave",code:"EL"}
+  {key:"half_pay_leave",label:"Half Pay Leave",code:"HPL"}
 ];
 const OFF_DUTY_TYPES = OFF_DUTY_CATEGORIES.map(c=>c.label);
-// The six leave codes that always get their own total column in the attendance register.
-const LEAVE_TOTAL_CODES = ["CL","D/OFF","CML","ML","HPL","EL"];
+// The leave codes that get their own total column in the attendance register.
+const LEAVE_TOTAL_CODES = ["W/OFF","CL","EL","ML","D/OFF","COFF"];
 
 const LEGACY_OFF_LABELS = ["CL","D/O","BH","CML","Night Duty Rest"];
 const LEGACY_DUTY_LABELS = ["Night Officer/Watch","VVIP Duty","Subdivision Check","Technical Assistance"];
@@ -85,54 +103,80 @@ const PERSON_STATUS = {
 };
 
 const DEFAULT_SETTINGS = {
-  stationName:"Cyber Crime Police Station",
-  stationCity:"Kochi City",
-  reportShort:"CYBER PS",
-  expectedStrength:30,
+  stationName:"Police Station Malihabad",
+  stationCity:"District Lucknow (North)",
+  reportShort:"PS MALIHABAD",
+  expectedStrength:52,
   presentCode:"P",
   attendanceCodes:{},              // off-duty label -> code override
-  permissions:{ editorsManagePersonnel:false, editorsReorderDuties:false },
+  permissions:{ editorsManagePersonnel:true, editorsReorderDuties:true },
   saveReportsToDrive:true,
   seniorDutiesFirst:true,
-  editLockHour:12           // non-admins can edit a date's duty chart only until this hour of that date
+  editLockHour:14           // non-admins can edit a date's duty chart only until 2 PM of that date
 };
 
 function defaultPersonnel(){
   const raw = [
-    ["p1","Suresh V.A","ACP"],["p2","Sreejith T","IP"],["p3","Vipin Kumar S","IP"],["p4","Elias P. George","IP"],
-    ["p5","Ananthu Ramesh","SI"],["p6","Baby","SI"],["p7","Vineeth Kumar T","SI"],["p8","Prince George","SI Tele"],
-    ["p9","Baburaj R","SI Tele"],["p10","Vinod K.P","SI"],["p11","Deepa P X","ASI"],["p12","Rehna","ASI"],
-    ["p13","Remesh S","ASI"],["p14","Shyam Kumar V","ASI"],["p15","Gireesh Kumar","ASI"],["p16","Nikhil George","SCPO"],
-    ["p17","Ajithraj","SCPO"],["p18","Ajith Balachandran","SCPO"],["p19","Arun R","SCPO"],["p20","Aneesh K R","SCPO"],
-    ["p21","Radhakrishnan","HC Tele"],["p22","Antoney George","HC Tele"],["p23","Saneer","PC Tele"],["p24","Alphit Andrews","CPO"],
-    ["p25","Sharafudheen P","CPO"],["p26","Bindosh Sadan","CPO"],["p27","Robin Raphel","CPO"],["p28","Sumith K.S","CPO"],
-    ["p29","Sreejith","CPO"],["p30","Abhilash","PC DVR"]
+    ["p1","Inspector Ajay Kumar","Inspector","SHO / प्रभारी निरीक्षक"],
+    ["p2","SSI Rakesh Singh","SSI","वरिष्ठ उप-निरीक्षक"],
+    ["p3","SI Ramesh Chandra","SI","चौकी प्रभारी मलिहाबाद"],
+    ["p4","SI Vijay Shankar","SI","चौकी प्रभारी रहीमाबाद"],
+    ["p5","SI Dinesh Pratap","SI","विवेचक (IO)"],
+    ["p6","SI Alok Kumar","SI","बीट अधिकारी"],
+    ["p7","ASI Ram Prasad","ASI","हेड मुहर्रिर (कार्यालय)"],
+    ["p8","HC Satish Kumar","Head Constable","जीडी लेखक"],
+    ["p9","HC Manoj Tiwari","Head Constable","हवालात गार्ड"],
+    ["p10","HC Anil Yadav","Head Constable","चीता मोबाइल"],
+    ["p11","HC Suresh Pandey","Head Constable","समन/वारंट तामीला"],
+    ["p12","CP Dharmendra Verma","Constable","डायल 112"],
+    ["p13","CP Kuldeep Singh","Constable","संतरी पहरा"],
+    ["p14","CP Amit Kumar","Constable","बीट आरक्षी"],
+    ["p15","CP Vikas Yadav","Constable","विवेचना सहायक"],
+    ["p16","CP Sandeep Kumar","Constable","कोर्ट पैरोकार"],
+    ["p17","W/CP Pooja Sharma","W/Constable","महिला हेल्प डेस्क"],
+    ["p18","W/CP Sunita Devi","W/Constable","पिंक बूथ"],
+    ["p19","DVR CP Harishankar","Driver","चालक सरकारी जीप"],
+    ["p20","HG Ramu Pal","Home Guard","थाना संतरी सहयोग"]
   ];
-  return raw.map(([id,name,rank])=>({id,name,rank,attached:false,status:"active",phone:"",penNo:"",remarks:"",statusDate:""}));
+  return raw.map(([id,name,rank,remarks])=>({id,name,rank,attached:false,status:"active",phone:"",penNo:"",remarks:remarks||"",statusDate:""}));
 }
 
 function defaultCore(){
   return {
-    dutyOrder:["sho","echo","crime_inv","sub_division_check","station_writer","asw","day_gd","day_watch","night_gd","night_watch","inv_asst","petition_enq","pro","aid_prosecution","echo_women","women_help_desk","course","class","driver","other_duty"],
+    dutyOrder:[
+      "sho","day_officer","night_officer","head_moharrir","gd_writer",
+      "crime_inv","day_sentry","night_sentry","hawalat_guard",
+      "dial_112","cheetah_mobile","pink_booth","parokar_court",
+      "saman_warrant","petition_enq","law_and_order","driver","other_duty"
+    ],
     strengthTable:{
       columns:[
-        {key:"acp",group:"ACP",sub:""},{key:"ip",group:"IP",sub:""},{key:"si",group:"SI",sub:""},{key:"si_tele",group:"SI Tele",sub:""},
-        {key:"asi",group:"ASI",sub:"GSI"},{key:"scpo_scpo",group:"SCPO",sub:"SCPO"},{key:"scpo_gsi",group:"SCPO",sub:"GSI"},{key:"scpo_gasi",group:"SCPO",sub:"GASI"},
-        {key:"hc_tele",group:"HC Tele",sub:""},{key:"cpo_gsi",group:"CPO",sub:"GSI"},{key:"cpo_gasi",group:"CPO",sub:"GASI"},{key:"cpo_gscpo",group:"CPO",sub:"GSCPO"},
-        {key:"cpo_cpo",group:"CPO",sub:"CPO"},{key:"pc_tele",group:"PC Tele",sub:""},{key:"dvr_cpo",group:"PC DVR",sub:""},{key:"ar_cpo",group:"AR CPO",sub:""}
+        {key:"sho",group:"SHO / Inspr",sub:""},
+        {key:"ssi",group:"SSI",sub:""},
+        {key:"si",group:"SI",sub:""},
+        {key:"asi",group:"ASI",sub:""},
+        {key:"hc",group:"Head Const.",sub:""},
+        {key:"cp",group:"Constable",sub:""},
+        {key:"wcp",group:"W/Constable",sub:""},
+        {key:"dvr",group:"Driver",sub:""},
+        {key:"hg",group:"Home Guard",sub:""}
       ],
       values:{
-        sanctioned:{acp:1,ip:3,si:2,si_tele:2,asi:1,scpo_scpo:7,scpo_gsi:0,scpo_gasi:0,hc_tele:2,cpo_gsi:11,cpo_gasi:0,cpo_gscpo:0,cpo_cpo:0,pc_tele:1,dvr_cpo:1,ar_cpo:0},
-        existing:  {acp:1,ip:3,si:2,si_tele:2,asi:1,scpo_scpo:0,scpo_gsi:0,scpo_gasi:5,hc_tele:2,cpo_gsi:1,cpo_gasi:0,cpo_gscpo:5,cpo_cpo:4,pc_tele:1,dvr_cpo:0,ar_cpo:0},
-        attached:  {acp:0,ip:0,si:0,si_tele:0,asi:0,scpo_scpo:0,scpo_gsi:0,scpo_gasi:0,hc_tele:0,cpo_gsi:0,cpo_gasi:0,cpo_gscpo:0,cpo_cpo:0,pc_tele:0,dvr_cpo:1,ar_cpo:2},
-        vacancy:   {acp:0,ip:0,si:0,si_tele:0,asi:0,scpo_scpo:2,scpo_gsi:0,scpo_gasi:0,hc_tele:0,cpo_gsi:1,cpo_gasi:0,cpo_gscpo:0,cpo_cpo:0,pc_tele:0,dvr_cpo:1,ar_cpo:0}
+        sanctioned:{sho:1,ssi:1,si:8,asi:2,hc:14,cp:32,wcp:6,dvr:2,hg:10},
+        existing:  {sho:1,ssi:1,si:7,asi:2,hc:12,cp:28,wcp:5,dvr:2,hg:8},
+        attached:  {sho:0,ssi:0,si:0,asi:0,hc:1,cp:2,wcp:0,dvr:0,hg:0},
+        vacancy:   {sho:0,ssi:0,si:1,asi:0,hc:2,cp:4,wcp:1,dvr:0,hg:2}
       },
       dataFixVersion:3
     },
     personnel: defaultPersonnel(),
     dutyTypes:[
-      {name:"Women Desk",category:"duty"},{name:"Cripto Class at Dom",category:"duty"},{name:"Awareness Class",category:"duty"},
-      {name:"Course / Training",category:"duty"},{name:"PSO",category:"duty"},{name:"Special Event Duty",category:"duty"}
+      {name:"Pink Booth / Mahila Desk",category:"duty"},
+      {name:"Dial 112 / PRV Duty",category:"duty"},
+      {name:"Cheetah Mobile / Patrolling",category:"duty"},
+      {name:"Court / Parokar Duty",category:"duty"},
+      {name:"VIP / Mela Duty",category:"duty"},
+      {name:"Saman & Warrant Tameela",category:"duty"}
     ],
     paradeOverrides:{},
     paradeMeta:{},

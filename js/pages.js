@@ -822,11 +822,11 @@ function renderPersonnel(el){
 
 function officerModal(p,done){
   const isNew=!p;
-  const v=p||{name:"",rank:"CPO",penNo:"",phone:"",attached:false,status:"active",statusDate:"",remarks:""};
+  const v=p||{name:"",rank:"Constable",penNo:"",phone:"",attached:false,status:"active",statusDate:"",remarks:""};
   openModal({title:isNew?"Add officer":"Edit officer — "+p.name,body:`<div class="form-grid">
       <div class="field full"><label>Name *</label><input class="input" id="oName" value="${esc(v.name)}"></div>
       <div class="field"><label>Rank / grade</label><select class="select" id="oRank">${RANK_OPTIONS.map(o=>`<option value="${esc(o.value)}" ${o.value===v.rank?"selected":""}>${esc(o.label)}</option>`).join("")}</select></div>
-      <div class="field"><label>PEN No</label><input class="input" id="oPen" value="${esc(v.penNo||"")}"></div>
+      <div class="field"><label>PNO / Badge No</label><input class="input" id="oPen" value="${esc(v.penNo||"")}"></div>
       <div class="field"><label>Phone</label><input class="input" id="oPhone" value="${esc(v.phone||"")}" inputmode="tel"></div>
       <div class="field"><label>&nbsp;</label><label class="check"><input type="checkbox" id="oAtt" ${v.attached?"checked":""}> Attached (Attd) to this station</label></div>
       ${isNew?"":`<div class="field"><label>Status</label><select class="select" id="oStatus">${Object.entries(PERSON_STATUS).map(([k,s])=>`<option value="${k}" ${k===v.status?"selected":""}>${s.label}</option>`).join("")}</select></div>

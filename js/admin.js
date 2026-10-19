@@ -203,7 +203,7 @@ function renderBackups(el){
   <div class="grid cols-3">
     <div class="card"><div class="card-body">
       <h3 style="font-size:17px;color:var(--navy)">${ic("database")} Backup now</h3>
-      <p class="hint">A full copy of all duty charts, roster, attendance and settings is written to <b>Drive ▸ CyberPS_Duty_App ▸ Backups</b>. Automatic backups are also taken every ${DEMO?"30":"30"} minutes of activity and every night.</p>
+      <p class="hint">A full copy of all duty charts, roster, attendance and settings is written to <b>Drive ▸ PS_Malihabad_Duty_Database ▸ Backups</b>. Automatic backups are also taken every ${DEMO?"30":"30"} minutes of activity and every night.</p>
       <button class="btn primary" id="bkNow">${ic("database")}Create backup</button>
     </div></div>
     <div class="card"><div class="card-body">
@@ -213,7 +213,7 @@ function renderBackups(el){
     </div></div>
     <div class="card"><div class="card-body">
       <h3 style="font-size:17px;color:var(--navy)">${ic("upload")} Import / migrate</h3>
-      <p class="hint">Load an exported JSON file, or the <span class="mono">cyberps-kochi-duty-state-v3.json</span> file saved by the old single-page duty chart. A safety backup is taken first.</p>
+      <p class="hint">Load an exported JSON file. A safety backup is taken first.</p>
       <div class="row"><label class="btn">${ic("upload")}Choose file<input type="file" id="bkFile" accept=".json,application/json" hidden></label>
       ${legacy?`<button class="btn gold" id="bkLegacy">${ic("upload")}Import from this browser</button>`:""}</div>
     </div></div>
@@ -250,7 +250,7 @@ function renderBackups(el){
     catch(e){ if(isAuthError(e)) return onAuthLost(e); toast(e.message,"error"); }
   };
   $("#bkExport",el).onclick=async()=>{
-    try{ const d=await api("data.exportAll",{}); downloadBlob(new Blob([JSON.stringify(d,null,1)],{type:"application/json"}),`CyberPS_Duty_Data_${dateKey(new Date())}.json`); toast("Export downloaded.","success"); }
+    try{ const d=await api("data.exportAll",{}); downloadBlob(new Blob([JSON.stringify(d,null,1)],{type:"application/json"}),`PS_Malihabad_Duty_Data_${dateKey(new Date())}.json`); toast("Export downloaded.","success"); }
     catch(e){ if(isAuthError(e)) return onAuthLost(e); toast(e.message,"error"); }
   };
   $("#bkFile",el).onchange=e=>{

@@ -9,14 +9,14 @@
  */
 (function () {
   "use strict";
-  var KEY = "cyberps.demo.db.v1";
+  var KEY = "psmalihabad.db.v1";
   var ROLES = { admin: 3, editor: 2, viewer: 1 };
   var HEAD = {
     login: ["Timestamp", "Email", "Name", "Event", "Result", "Session", "Browser", "IP", "Details"],
     activity: ["Timestamp", "Email", "Name", "Role", "Module", "Action", "Record", "Old Value", "New Value", "Result", "Session"],
     error: ["Timestamp", "Email", "Module", "Operation", "Error", "Stack / Details", "Browser", "Status"]
   };
-  var OWNER = "demo.admin@gmail.com";
+  var OWNER = "admin.malihabad@uppolice.gov.in";
 
   function pad(n) { return n < 10 ? "0" + n : "" + n; }
   function stamp(d) { d = d || new Date(); return pad(d.getDate()) + "-" + pad(d.getMonth() + 1) + "-" + d.getFullYear() + " " + pad(d.getHours()) + ":" + pad(d.getMinutes()) + ":" + pad(d.getSeconds()); }
@@ -30,9 +30,9 @@
       db = {
         version: 1, core: {}, records: {}, attendance: {},
         users: [
-          { email: OWNER, name: "Demo Administrator", role: "admin", status: "Active", addedBy: "setup()", addedOn: stamp(), lastLogin: "", lastActivity: "", notes: "Owner account (demo)" },
-          { email: "demo.editor@gmail.com", name: "Demo Duty Editor", role: "editor", status: "Active", addedBy: OWNER, addedOn: stamp(), lastLogin: "", lastActivity: "", notes: "" },
-          { email: "demo.viewer@gmail.com", name: "Demo Viewer", role: "viewer", status: "Active", addedBy: OWNER, addedOn: stamp(), lastLogin: "", lastActivity: "", notes: "" }
+          { email: OWNER, name: "प्रभारी निरीक्षक (SHO)", role: "admin", status: "Active", addedBy: "setup()", addedOn: stamp(), lastLogin: "", lastActivity: "", notes: "Station Incharge (Admin)", pw: demoHash("Admin@123"), mustChange: false },
+          { email: "diwan.malihabad@uppolice.gov.in", name: "हेड मुहर्रिर / दीवान जी", role: "editor", status: "Active", addedBy: OWNER, addedOn: stamp(), lastLogin: "", lastActivity: "", notes: "Duty Writer / दीवान जी", pw: demoHash("Duty@123"), mustChange: false },
+          { email: "beat.malihabad@uppolice.gov.in", name: "बीट आरक्षी / सिपाही", role: "viewer", status: "Active", addedBy: OWNER, addedOn: stamp(), lastLogin: "", lastActivity: "", notes: "Viewer (ड्यूटी देखने हेतु)", pw: demoHash("Beat@123"), mustChange: false }
         ],
         login: [], activity: [], error: [], backups: [], sessions: {},
         lastModifiedBy: "", lastModifiedAt: "", lastBackupAt: 0

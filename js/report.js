@@ -28,7 +28,8 @@ function computeDutyBoard(key){
   });
   rows.forEach(r=>{
     if(r.key==="crime_inv"){
-      const ip=r.people.filter(x=>baseRank(x.p.rank)==="IP"), rest=r.people.filter(x=>baseRank(x.p.rank)!=="IP");
+      const isOfficer=x=>{ const b=baseRank(x.p.rank); return b==="Inspector"||b==="IP"||b==="SSI"||b==="SI"; };
+      const ip=r.people.filter(isOfficer), rest=r.people.filter(x=>!isOfficer(x));
       r.people=ip.concat(rest);
     }
   });
@@ -44,7 +45,7 @@ function computeDutyBoard(key){
   const unassigned=activePersonnel().filter(p=>!(asg[p.id]&&(asg[p.id].duty||"").trim())).length;
   // Final order of the Duty Detailing and Off Duty rows:
   //  1. default = duty priority order (off duty: standard leave order);
-  //  2. rows with an ACP / IP officer move to the top (ACP rows first);
+  //  2. rows with an ACP / Inspector / SI officer move to the top;
   //  3. if the rows were dragged into a custom order for this date, that wins.
   const dutyRows=arrangeRows(visibleRows.concat(otherRows),rec.rowOrder);
   const offOrdered=arrangeRows(offRows,rec.offRowOrder);
@@ -53,7 +54,7 @@ function computeDutyBoard(key){
 function arrangeRows(list,savedOrder){
   let rows=list.map((r,i)=>Object.assign(r,{rowId:r.label.toLowerCase(),defIdx:i}));
   if(settings().seniorDutiesFirst!==false){
-    const seniority=r=>{ const rs=r.people.map(x=>baseRank(x.p.rank)); return rs.includes("ACP")?0:rs.includes("IP")?1:2; };
+    const seniority=r=>{ const rs=r.people.map(x=>baseRank(x.p.rank)); return rs.includes("ACP")?0:(rs.includes("Inspector")||rs.includes("IP")||rs.includes("SHO"))?1:(rs.includes("SSI")||rs.includes("SI"))?2:3; };
     rows.sort((a,b)=>seniority(a)-seniority(b)||a.defIdx-b.defIdx);
   }
   const manual=Array.isArray(savedOrder)&&savedOrder.length?savedOrder.map(x=>String(x).toLowerCase()):null;
@@ -67,7 +68,7 @@ function arrangeRows(list,savedOrder){
   return rows;
 }
 function splitIpFirst(people){
-  const idx=people.findIndex(x=>baseRank(x.p.rank)!=="IP");
+  const idx=people.findIndex(x=>{ const b=baseRank(x.p.rank); return !(b==="Inspector"||b==="IP"||b==="SSI"||b==="SI"); });
   if(idx<=0) return [people];
   return [people.slice(0,idx),people.slice(idx)];
 }
@@ -312,12 +313,11 @@ function exportDutyPdf(key){
    Particulars | Rank | Name | Count, On Parade block, Off Parade block
    (with duty / reason against each name), totals and grand total. */
 const PARADE_RANK_GROUPS=[
-  {label:"ACP",ranks:["ACP"]},
-  {label:"IP",ranks:["IP"]},
-  {label:"SI/Tele SI",ranks:["SI","SI Tele"]},
+  {label:"Inspector / SHO",ranks:["Inspector","SHO","IP","ACP"]},
+  {label:"Sub-Inspector (SSI/SI)",ranks:["SSI","SI","SI Tele"]},
   {label:"ASI",ranks:["ASI"]},
-  {label:"SCPO/Tele HC",ranks:["SCPO","HC Tele"]},
-  {label:"CPO/Tele PC",ranks:["CPO","PC Tele","PC DVR","AR CPO"]}
+  {label:"Head Constable",ranks:["Head Constable","SCPO","HC Tele"]},
+  {label:"Constable / Driver",ranks:["Constable","W/Constable","Driver","Home Guard","PRD","CPO","PC Tele","PC DVR","AR CPO"]}
 ];
 function paradeGroupFor(rank){
   const b=baseRank(rank);

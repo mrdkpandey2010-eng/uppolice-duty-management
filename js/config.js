@@ -1,24 +1,29 @@
 /**
  * ============================================================================
- *  Cyber Crime PS, Kochi City — Duty Management System
- *  FRONT-END CONFIGURATION  (edit these two values — see SETUP-GUIDE.md)
+ *  Uttar Pradesh Police — District Lucknow (North)
+ *  Police Station Malihabad (थाना मलिहाबाद) — Duty Management System
+ *  FRONT-END CONFIGURATION (Edit API_URL after deploying backend/Code.gs)
  * ============================================================================
  *
- *  While either value still contains "PASTE_", the app runs in DEMO MODE:
- *  everything works, but data is kept only in this browser (nothing goes to
- *  Google Drive) — useful for trying the screens before deployment.
+ *  SETUP INSTRUCTIONS:
+ *  1. Deploy backend/Code.gs to Google Apps Script (see backend/SETUP-GUIDE.md).
+ *  2. Paste your Google Apps Script Web App URL (ends with /exec) into API_URL below.
+ *  3. (Optional) Paste your Google OAuth 2.0 Web Client ID into GOOGLE_CLIENT_ID.
+ *
+ *  NOTE: While API_URL contains "PASTE_", the application runs in local DEMO MODE:
+ *  All features work instantly and save in this browser's local database!
  */
 window.APP_CONFIG = {
-  // Google Cloud ▸ APIs & Services ▸ Credentials ▸ OAuth 2.0 Client ID (Web application)
-  GOOGLE_CLIENT_ID: "891939995278-ig2u9ej2u7ft3q5sb4u9dbogceprv7bj.apps.googleusercontent.com",
+  // Google Cloud ▸ APIs & Services ▸ Credentials ▸ OAuth 2.0 Client ID (Optional for Google Sign-In)
+  GOOGLE_CLIENT_ID: "PASTE_YOUR_GOOGLE_CLIENT_ID_HERE",
 
   // Apps Script ▸ Deploy ▸ Web app URL (ends with /exec)
-  API_URL: "https://script.google.com/macros/s/AKfycbxZbRIQ-FC0_8O8sr_ZaUWs9ST1M6OOnk6ClWt6unFW2mtjM_s4XxgC-X-y01PMp1jZ/exec",
+  // Example: "https://script.google.com/macros/s/AKfycbx.../exec"
+  API_URL: "PASTE_YOUR_APPS_SCRIPT_URL_HERE",
 
   // Record the public IP address of the officer's network in the login log
-  // (looked up once at sign-in via api.ipify.org). Set to false to disable.
   CAPTURE_PUBLIC_IP: true,
 
-  // How often (seconds) the app checks Drive for changes made by other officers.
-  POLL_SECONDS: 40
+  // How often (seconds) the app checks Google Drive for updates made by other officers
+  POLL_SECONDS: 30
 };
