@@ -15,11 +15,11 @@
  */
 window.APP_CONFIG = {
   // Google Cloud ▸ APIs & Services ▸ Credentials ▸ OAuth 2.0 Client ID (Optional for Google Sign-In)
-  GOOGLE_CLIENT_ID: "PASTE_YOUR_GOOGLE_CLIENT_ID_HERE",
+  GOOGLE_CLIENT_ID: "AKfycbxj03QfiDV-hovl8WEJGhbSSd45jtkvIUEgRrqb-uEjDn_V_FdW_Mu_KoqtD4dm3nWRmA",
 
   // Apps Script ▸ Deploy ▸ Web app URL (ends with /exec)
   // Example: "https://script.google.com/macros/s/AKfycbx.../exec"
-  API_URL: "PASTE_YOUR_APPS_SCRIPT_URL_HERE",
+  API_URL: "https://script.google.com/macros/s/AKfycbxj03QfiDV-hovl8WEJGhbSSd45jtkvIUEgRrqb-uEjDn_V_FdW_Mu_KoqtD4dm3nWRmA/exec",
 
   // Record the public IP address of the officer's network in the login log
   CAPTURE_PUBLIC_IP: true,
