@@ -18,6 +18,7 @@ const PAGES={
 
 /* ------------------------------------------------------------ sign-in */
 function showLogin(message){
+  checkDemo();
   $("#appShell").hidden=true;
   $("#loginScreen").hidden=false;
   const err=$("#loginError");
@@ -26,6 +27,23 @@ function showLogin(message){
   else if(HAS_GOOGLE_AUTH) initGSI();
   else { $("#gsiButton").hidden=true; $("#loginLoading").hidden=true; $("#demoLogin").hidden=true; }
   wirePasswordLogin();
+  wireDemoSwitch();
+}
+function wireDemoSwitch(){
+  let s=$("#demoSwitchWrap");
+  if(!s){
+    s=document.createElement("div");
+    s.id="demoSwitchWrap";
+    s.style.marginTop="16px";
+    s.style.textAlign="center";
+    $("#pwLogin").insertAdjacentElement("afterend",s);
+  }
+  if(DEMO){
+    s.innerHTML="";
+  }else{
+    s.innerHTML=`<button type="button" class="btn sm" id="btnForceDemo" style="background:rgba(255,255,255,.08);border:1px dashed #64748b;color:#cbd5e1;cursor:pointer;padding:7px 14px;border-radius:6px;font-size:13px">⚡ बिना सर्वर के ऑफलाइन चलाएं (Offline Demo Mode)</button>`;
+    $("#btnForceDemo").onclick=()=>{ window.FORCE_DEMO=true; checkDemo(); showLogin(); };
+  }
 }
 function wirePasswordLogin(){
   const f=$("#pwLogin"); if(!f||f.dataset.wired) return;

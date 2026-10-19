@@ -8,7 +8,8 @@
 const CFG = window.APP_CONFIG || {};
 const HAS_API = !!(CFG.API_URL && !/PASTE_/.test(CFG.API_URL));
 const HAS_GOOGLE_AUTH = !!(CFG.GOOGLE_CLIENT_ID && !/PASTE_/.test(CFG.GOOGLE_CLIENT_ID));
-const DEMO = !HAS_API;
+var DEMO = !HAS_API;
+function checkDemo(){ DEMO = !!window.FORCE_DEMO || !HAS_API; return DEMO; }
 const APP_VERSION = "4.0";
 
 /* ------------------------------------------------------------------ ranks */
@@ -385,7 +386,13 @@ async function api(action,payload){
   }catch(e){
     const er=new Error(e&&e.name==="AbortError"?"The Google server took too long to respond.":"Network error — cannot reach the Google server."); er.code="NETWORK"; throw er;
   }finally{ if(timer) clearTimeout(timer); }
-  if(!res.ok){ const er=new Error("Server responded with HTTP "+res.status); er.code="NETWORK"; throw er; }
+  if(!res.ok){
+    let msg="Server responded with HTTP "+res.status;
+    if(res.status===403){
+      msg="Google Apps Script (403 Forbidden): Google Apps Script में 'Who has access' को 'Anyone' सेट करके New Deployment बनाएं।";
+    }
+    const er=new Error(msg); er.code="NETWORK"; throw er;
+  }
   let json;
   try{ json=await res.json(); }
   catch(e){ const er=new Error("Unexpected reply from the server. Check the Web App is deployed with access \"Anyone\"."); er.code="SERVER_ERROR"; throw er; }
