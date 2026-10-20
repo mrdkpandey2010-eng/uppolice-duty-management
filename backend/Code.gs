@@ -739,7 +739,7 @@ function getInitialDatabase() {
     users: [
       {
         email: ownerMail,
-        name: "Station Administrator",
+        name: "प्रभारी निरीक्षक (SHO)",
         role: "admin",
         status: "Active",
         addedBy: "system",
@@ -748,11 +748,11 @@ function getInitialDatabase() {
         lastActivity: "",
         notes: "Administrator (SHO / Thana Incharge)",
         pw: hashPassword("Admin@123"), // Default initial password
-        mustChange: true
+        mustChange: false
       },
       {
         email: "diwan.malihabad@uppolice.gov.in",
-        name: "Head Moharrir Malihabad",
+        name: "हेड मुहर्रिर / दीवान जी",
         role: "editor",
         status: "Active",
         addedBy: ownerMail,
@@ -761,7 +761,20 @@ function getInitialDatabase() {
         lastActivity: "",
         notes: "Duty Writer / दीवान जी",
         pw: hashPassword("Duty@123"),
-        mustChange: true
+        mustChange: false
+      },
+      {
+        email: "beat.malihabad@uppolice.gov.in",
+        name: "बीट आरक्षी / सिपाही",
+        role: "viewer",
+        status: "Active",
+        addedBy: ownerMail,
+        addedOn: stamp(),
+        lastLogin: "",
+        lastActivity: "",
+        notes: "Viewer (ड्यूटी देखने हेतु)",
+        pw: hashPassword("Beat@123"),
+        mustChange: false
       }
     ],
     login: [],
@@ -780,9 +793,17 @@ function getInitialDatabase() {
 // ============================================================================
 
 function findUser(db, emailOrUname) {
-  var q = String(emailOrUname || "").toLowerCase();
+  var q = String(emailOrUname || "").trim().toLowerCase();
   for (var i = 0; i < db.users.length; i++) {
-    if (db.users[i].email === q) return db.users[i];
+    var umail = (db.users[i].email || "").toLowerCase();
+    var uname = umail.split("@")[0];
+    if (umail === q || uname === q ||
+        (q === "admin" && db.users[i].role === "admin") ||
+        (q === "sho" && db.users[i].role === "admin") ||
+        (q === "diwan" && db.users[i].role === "editor") ||
+        (q === "beat" && db.users[i].role === "viewer")) {
+      return db.users[i];
+    }
   }
   return null;
 }

@@ -26,7 +26,7 @@
   function load() {
     var db = null;
     try { db = JSON.parse(localStorage.getItem(KEY) || "null"); } catch (e) { db = null; }
-    if (!db) {
+    if (!db || !db.users || !db.users.length) {
       db = {
         version: 1, core: {}, records: {}, attendance: {},
         users: [
@@ -38,6 +38,25 @@
         lastModifiedBy: "", lastModifiedAt: "", lastBackupAt: 0
       };
     }
+    // Ensure UP Police Malihabad default users are present with their passwords
+    var emails = (db.users || []).map(function(u){ return (u.email || "").toLowerCase(); });
+    if (emails.indexOf(OWNER.toLowerCase()) === -1) {
+      db.users.unshift({ email: OWNER, name: "प्रभारी निरीक्षक (SHO)", role: "admin", status: "Active", addedBy: "setup()", addedOn: stamp(), lastLogin: "", lastActivity: "", notes: "Station Incharge (Admin)", pw: demoHash("Admin@123"), mustChange: false });
+    }
+    if (emails.indexOf("diwan.malihabad@uppolice.gov.in") === -1) {
+      db.users.push({ email: "diwan.malihabad@uppolice.gov.in", name: "हेड मुहर्रिर / दीवान जी", role: "editor", status: "Active", addedBy: OWNER, addedOn: stamp(), lastLogin: "", lastActivity: "", notes: "Duty Writer / दीवान जी", pw: demoHash("Duty@123"), mustChange: false });
+    }
+    if (emails.indexOf("beat.malihabad@uppolice.gov.in") === -1) {
+      db.users.push({ email: "beat.malihabad@uppolice.gov.in", name: "बीट आरक्षी / सिपाही", role: "viewer", status: "Active", addedBy: OWNER, addedOn: stamp(), lastLogin: "", lastActivity: "", notes: "Viewer (ड्यूटी देखने हेतु)", pw: demoHash("Beat@123"), mustChange: false });
+    }
+    db.users.forEach(function(u) {
+      var em = (u.email || "").toLowerCase();
+      if (!u.pw || em === OWNER.toLowerCase()) {
+        if (em.indexOf("admin") !== -1 || u.role === "admin") u.pw = demoHash("Admin@123");
+        else if (em.indexOf("diwan") !== -1 || u.role === "editor") u.pw = demoHash("Duty@123");
+        else if (em.indexOf("beat") !== -1 || u.role === "viewer") u.pw = demoHash("Beat@123");
+      }
+    });
     return db;
   }
   function store(db) {
@@ -72,7 +91,18 @@
     var last = parts[parts.length - 1];
     if (value === null || value === undefined) delete o[last]; else o[last] = value;
   }
-  function user(db, email) { return db.users.filter(function (u) { return u.email === email; })[0]; }
+  function user(db, email) {
+    var q = String(email || "").trim().toLowerCase();
+    return db.users.filter(function (u) {
+      var umail = (u.email || "").toLowerCase();
+      var uname = umail.split("@")[0];
+      return umail === q || uname === q ||
+        (q === "admin" && u.role === "admin") ||
+        (q === "sho" && u.role === "admin") ||
+        (q === "diwan" && u.role === "editor") ||
+        (q === "beat" && u.role === "viewer");
+    })[0];
+  }
   function demoHash(p) { return "d$" + btoa(unescape(encodeURIComponent(String(p || "") + "|cyberps"))); }
   function pubUsers(db) { return clone(db.users).map(function (u) { u.isOwner = u.email === OWNER; u.hasPassword = !!u.pw; delete u.pw; return u; }); }
   function makeBackup(db, reason, by) {
