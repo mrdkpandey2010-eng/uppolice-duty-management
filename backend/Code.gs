@@ -323,13 +323,19 @@ function handleAction(action, payload, sessionToken, client) {
 
     case "data.bootstrap":
       var effectiveOwnerMail = getProperty("OWNER_EMAIL") || OWNER_EMAIL;
+      var curYr = (new Date()).getFullYear();
+      var yrs = [curYr - 1, curYr, curYr + 1];
+      Object.keys(db.records || {}).forEach(function(k){
+        var y = parseInt(k.slice(0, 4), 10);
+        if (y && yrs.indexOf(y) === -1) yrs.push(y);
+      });
       out = {
         version: db.version,
         core: db.core,
         records: db.records,
         attendance: db.attendance,
-        loadedYears: [],
-        availableYears: [],
+        loadedYears: yrs,
+        availableYears: yrs,
         user: {
           email: ctx.email,
           name: ctx.name,
@@ -341,6 +347,15 @@ function handleAction(action, payload, sessionToken, client) {
         lastModifiedAt: db.lastModifiedAt,
         serverTime: stamp()
       };
+      break;
+
+    case "data.getYear":
+      var yr = String(payload.year || "");
+      var yrRecords = {};
+      Object.keys(db.records || {}).forEach(function(k){
+        if (k.indexOf(yr) === 0) yrRecords[k] = db.records[k];
+      });
+      out = { year: Number(yr), records: yrRecords };
       break;
 
     case "data.poll":

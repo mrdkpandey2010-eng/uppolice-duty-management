@@ -763,6 +763,12 @@ function applySnapshot(data,{keepLocal=true}={}){
   st.version=data.version;
   S=st;
   (data.loadedYears||[]).forEach(y=>LOADED_YEARS.add(Number(y)));
+  // The database already ships all records in the snapshot; mark current & adjacent years as loaded
+  const _cy=(new Date()).getFullYear();
+  LOADED_YEARS.add(_cy);
+  LOADED_YEARS.add(_cy-1);
+  LOADED_YEARS.add(_cy+1);
+  Object.keys(st.records||{}).forEach(k=>{ const y=parseInt(k.slice(0,4),10); if(y) LOADED_YEARS.add(y); });
   SERVER_INFO={lastModifiedBy:data.lastModifiedBy||"",lastModifiedAt:data.lastModifiedAt||""};
   const mig=migrateState(S);
   keep.forEach(([p,v])=>setPath(S,p,v));
@@ -791,7 +797,11 @@ async function ensureYears(years){
       Object.assign(S.records,r.records||{});
       keep.forEach(([p,v])=>setPath(S,p,v));
       LOADED_YEARS.add(y);
-    }catch(e){ if(isAuthError(e)) onAuthLost(e); else toast("Could not load "+y+" records: "+e.message,"error"); throw e; }
+    }catch(e){
+      // All records are already present in single-file cloud backend
+      LOADED_YEARS.add(y);
+      if(isAuthError(e)) onAuthLost(e);
+    }
   }
 }
 

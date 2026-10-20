@@ -28,7 +28,7 @@ function needYearsThen(el,years,render){
   const miss=[...new Set(years)].filter(y=>!LOADED_YEARS.has(y));
   if(!miss.length) return false;
   el.innerHTML=loadingBlock("Loading "+miss.join(", ")+" duty charts from Google Drive…");
-  ensureYears(miss).then(()=>{ if(el.isConnected) render(el); }).catch(()=>{});
+  ensureYears(miss).then(()=>{ if(el.isConnected) render(el); }).catch(()=>{ if(el.isConnected) render(el); });
   return true;
 }
 function personLabel(p){ return `${displayRank(p.rank)} ${p.name}`; }
